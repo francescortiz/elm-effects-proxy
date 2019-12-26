@@ -1,0 +1,20 @@
+{
+  "name": "elm-effects-task",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "elm-live": "elm-live src/EffectsTaskDemo.elm --open --start-page=src/elm-effects-task-demo.html -- --output src/elm-effects-task-demo.js",
+    "watch:typescript": "tsc --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash.get": "^4.4.6",
+    "elm-live": "^4.0.0-rc.1",
+    "lodash.get": "^4.4.2",
+    "typescript": "^3.7.4"
+  }
+}

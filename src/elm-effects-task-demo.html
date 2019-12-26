@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    function echo(a) {
+        console.log("echo() => ",a)
+        return a;
+    }
+</script>
+<script src="src/websocket-effects-patch.js"></script>
+<script src="src/elm-effects-task-demo.js"></script>
+<script>
+    var elmEffectsTaskDemo = Elm.EffectsTaskDemo.init();
+</script>
+</body>
+</html>
