@@ -5319,17 +5319,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $elm$http$Http$BadStatus = function (a) {
-	return {$: 'BadStatus', a: a};
-};
-var $elm$http$Http$BadUrl = function (a) {
-	return {$: 'BadUrl', a: a};
-};
 var $author$project$EffectsTaskDemo$GotEffectResponse = function (a) {
 	return {$: 'GotEffectResponse', a: a};
 };
-var $elm$http$Http$NetworkError = {$: 'NetworkError'};
-var $elm$http$Http$Timeout = {$: 'Timeout'};
 var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
@@ -5897,62 +5889,6 @@ var $elm$core$Dict$update = F3(
 			return A2($elm$core$Dict$remove, targetKey, dictionary);
 		}
 	});
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
-var $elm$http$Http$expectStringResponse = F2(
-	function (toMsg, toResult) {
-		return A3(
-			_Http_expect,
-			'',
-			$elm$core$Basics$identity,
-			A2($elm$core$Basics$composeR, toResult, toMsg));
-	});
-var $elm$http$Http$BadBody = function (a) {
-	return {$: 'BadBody', a: a};
-};
-var $elm$core$Result$mapError = F2(
-	function (f, result) {
-		if (result.$ === 'Ok') {
-			var v = result.a;
-			return $elm$core$Result$Ok(v);
-		} else {
-			var e = result.a;
-			return $elm$core$Result$Err(
-				f(e));
-		}
-	});
-var $elm$http$Http$resolve = F2(
-	function (toResult, response) {
-		switch (response.$) {
-			case 'BadUrl_':
-				var url = response.a;
-				return $elm$core$Result$Err(
-					$elm$http$Http$BadUrl(url));
-			case 'Timeout_':
-				return $elm$core$Result$Err($elm$http$Http$Timeout);
-			case 'NetworkError_':
-				return $elm$core$Result$Err($elm$http$Http$NetworkError);
-			case 'BadStatus_':
-				var metadata = response.a;
-				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.statusCode));
-			default:
-				var body = response.b;
-				return A2(
-					$elm$core$Result$mapError,
-					$elm$http$Http$BadBody,
-					toResult(body));
-		}
-	});
-var $elm$http$Http$expectString = function (toMsg) {
-	return A2(
-		$elm$http$Http$expectStringResponse,
-		toMsg,
-		$elm$http$Http$resolve($elm$core$Result$Ok));
-};
 var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
@@ -6105,6 +6041,11 @@ var $elm$http$Http$MySub = F2(
 	function (a, b) {
 		return {$: 'MySub', a: a, b: b};
 	});
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
 var $elm$http$Http$subMap = F2(
 	function (func, _v0) {
 		var tracker = _v0.a;
@@ -6126,7 +6067,6 @@ var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $elm$json$Json$Encode$int = _Json_wrap;
 var $elm$http$Http$jsonBody = function (value) {
 	return A2(
 		_Http_pair,
@@ -6147,8 +6087,102 @@ var $elm$http$Http$post = function (r) {
 		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
 var $author$project$EffectsTask$prefix = 'https://elm-effects-task.flexidao.com/';
-var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$EffectsTask$cmd = F3(
+	function (expect, functionName, _arguments) {
+		var url = _Utils_ap($author$project$EffectsTask$prefix, functionName);
+		return (!$elm$core$List$length(_arguments)) ? $elm$http$Http$get(
+			{expect: expect, url: url}) : $elm$http$Http$post(
+			{
+				body: $elm$http$Http$jsonBody(
+					A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, _arguments)),
+				expect: expect,
+				url: url
+			});
+	});
+var $elm$http$Http$expectStringResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'',
+			$elm$core$Basics$identity,
+			A2($elm$core$Basics$composeR, toResult, toMsg));
+	});
+var $elm$http$Http$BadBody = function (a) {
+	return {$: 'BadBody', a: a};
+};
+var $elm$http$Http$BadStatus = function (a) {
+	return {$: 'BadStatus', a: a};
+};
+var $elm$http$Http$BadUrl = function (a) {
+	return {$: 'BadUrl', a: a};
+};
+var $elm$http$Http$NetworkError = {$: 'NetworkError'};
+var $elm$http$Http$Timeout = {$: 'Timeout'};
+var $elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (result.$ === 'Ok') {
+			var v = result.a;
+			return $elm$core$Result$Ok(v);
+		} else {
+			var e = result.a;
+			return $elm$core$Result$Err(
+				f(e));
+		}
+	});
+var $elm$http$Http$resolve = F2(
+	function (toResult, response) {
+		switch (response.$) {
+			case 'BadUrl_':
+				var url = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadUrl(url));
+			case 'Timeout_':
+				return $elm$core$Result$Err($elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return $elm$core$Result$Err($elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var body = response.b;
+				return A2(
+					$elm$core$Result$mapError,
+					$elm$http$Http$BadBody,
+					toResult(body));
+		}
+	});
+var $elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$elm$http$Http$resolve($elm$core$Result$Ok));
+};
+var $elm$json$Json$Encode$int = _Json_wrap;
 var $elm$http$Http$stringResolver = A2(_Http_expect, '', $elm$core$Basics$identity);
+var $author$project$EffectsTask$simpleStringResolver = $elm$http$Http$stringResolver(
+	function (response) {
+		switch (response.$) {
+			case 'BadUrl_':
+				var error = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadUrl(error));
+			case 'Timeout_':
+				return $elm$core$Result$Err($elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return $elm$core$Result$Err($elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				var body = response.b;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var metadata = response.a;
+				var body = response.b;
+				return $elm$core$Result$Ok(body);
+		}
+	});
+var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$core$Task$fail = _Scheduler_fail;
 var $elm$http$Http$resultToTask = function (result) {
 	if (result.$ === 'Ok') {
@@ -6166,171 +6200,103 @@ var $elm$http$Http$task = function (r) {
 		$elm$http$Http$resultToTask,
 		{allowCookiesFromOtherDomains: false, body: r.body, expect: r.resolver, headers: r.headers, method: r.method, timeout: r.timeout, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $author$project$EffectsTask$task = function (_v0) {
+	var resolver = _v0.resolver;
+	var functionName = _v0.functionName;
+	var _arguments = _v0._arguments;
+	var timeout = _v0.timeout;
+	return $elm$http$Http$task(
+		{
+			body: $elm$http$Http$jsonBody(
+				A2($elm$json$Json$Encode$list, $elm$core$Basics$identity, _arguments)),
+			headers: _List_Nil,
+			method: (!$elm$core$List$length(_arguments)) ? 'GET' : 'POST',
+			resolver: resolver,
+			timeout: timeout,
+			url: _Utils_ap($author$project$EffectsTask$prefix, functionName)
+		});
+};
 var $author$project$EffectsTaskDemo$init = function (flags) {
 	return _Utils_Tuple2(
 		{},
 		$elm$core$Platform$Cmd$batch(
 			_List_fromArray(
 				[
-					$elm$http$Http$get(
-					{
-						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
-						url: $author$project$EffectsTask$prefix + 'patch'
-					}),
-					$elm$http$Http$post(
-					{
-						body: $elm$http$Http$jsonBody(
-							A2(
-								$elm$json$Json$Encode$list,
-								$elm$json$Json$Encode$string,
-								_List_fromArray(
-									['Pep', 'Josep']))),
-						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
-						url: $author$project$EffectsTask$prefix + 'console.log'
-					}),
-					$elm$http$Http$post(
-					{
-						body: $elm$http$Http$jsonBody(
-							A2(
-								$elm$json$Json$Encode$list,
-								$elm$json$Json$Encode$string,
-								_List_fromArray(
-									['Pep', 'Josep']))),
-						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
-						url: $author$project$EffectsTask$prefix + 'document'
-					}),
-					$elm$http$Http$post(
-					{
-						body: $elm$http$Http$jsonBody(
-							A2(
-								$elm$json$Json$Encode$list,
-								$elm$json$Json$Encode$string,
-								_List_fromArray(
-									['Pep', 'Josep']))),
-						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
-						url: $author$project$EffectsTask$prefix + 'nothing.nothing'
-					}),
-					$elm$http$Http$post(
-					{
-						body: $elm$http$Http$jsonBody(
-							A2(
-								$elm$json$Json$Encode$list,
-								$elm$json$Json$Encode$string,
-								_List_fromArray(
-									['Pep', 'Josep']))),
-						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
-						url: $author$project$EffectsTask$prefix + 'asyncEcho'
-					}),
+					A3(
+					$author$project$EffectsTask$cmd,
+					$elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
+					'patch',
+					_List_Nil),
+					A3(
+					$author$project$EffectsTask$cmd,
+					$elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
+					'console.log',
+					_List_fromArray(
+						[
+							$elm$json$Json$Encode$string('Pep'),
+							$elm$json$Json$Encode$int(3)
+						])),
+					A3(
+					$author$project$EffectsTask$cmd,
+					$elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
+					'document',
+					_List_fromArray(
+						[
+							$elm$json$Json$Encode$string('Pep'),
+							$elm$json$Json$Encode$int(3)
+						])),
+					A3(
+					$author$project$EffectsTask$cmd,
+					$elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
+					'nothing.nothing',
+					_List_fromArray(
+						[
+							$elm$json$Json$Encode$string('Pep'),
+							$elm$json$Json$Encode$int(3)
+						])),
+					A3(
+					$author$project$EffectsTask$cmd,
+					$elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
+					'asyncEcho',
+					_List_fromArray(
+						[
+							$elm$json$Json$Encode$string('Happy')
+						])),
 					A2(
 					$elm$core$Task$attempt,
 					$author$project$EffectsTaskDemo$GotEffectResponse,
 					A2(
 						$elm$core$Task$andThen,
 						function (previousValue) {
-							return (previousValue === '4') ? $elm$http$Http$task(
+							return (previousValue === '4') ? $author$project$EffectsTask$task(
 								{
-									body: $elm$http$Http$jsonBody(
-										A2(
-											$elm$json$Json$Encode$list,
-											$elm$json$Json$Encode$string,
-											_List_fromArray(
-												['Nice! We received the 4!']))),
-									headers: _List_Nil,
-									method: 'POST',
-									resolver: $elm$http$Http$stringResolver(
-										function (response) {
-											switch (response.$) {
-												case 'BadUrl_':
-													var error = response.a;
-													return $elm$core$Result$Err(
-														$elm$http$Http$BadUrl(error));
-												case 'Timeout_':
-													return $elm$core$Result$Err($elm$http$Http$Timeout);
-												case 'NetworkError_':
-													return $elm$core$Result$Err($elm$http$Http$NetworkError);
-												case 'BadStatus_':
-													var metadata = response.a;
-													var body = response.b;
-													return $elm$core$Result$Err(
-														$elm$http$Http$BadStatus(metadata.statusCode));
-												default:
-													var metadata = response.a;
-													var body = response.b;
-													return $elm$core$Result$Ok(body);
-											}
-										}),
-									timeout: $elm$core$Maybe$Nothing,
-									url: $author$project$EffectsTask$prefix + 'echo'
-								}) : $elm$http$Http$task(
+									_arguments: _List_fromArray(
+										[
+											$elm$json$Json$Encode$string('Nice! We received the 4!')
+										]),
+									functionName: 'echo',
+									resolver: $author$project$EffectsTask$simpleStringResolver,
+									timeout: $elm$core$Maybe$Nothing
+								}) : $author$project$EffectsTask$task(
 								{
-									body: $elm$http$Http$jsonBody(
-										A2(
-											$elm$json$Json$Encode$list,
-											$elm$json$Json$Encode$string,
-											_List_fromArray(
-												['Shit! We didn\'t receive the 4!']))),
-									headers: _List_Nil,
-									method: 'POST',
-									resolver: $elm$http$Http$stringResolver(
-										function (response) {
-											switch (response.$) {
-												case 'BadUrl_':
-													var error = response.a;
-													return $elm$core$Result$Err(
-														$elm$http$Http$BadUrl(error));
-												case 'Timeout_':
-													return $elm$core$Result$Err($elm$http$Http$Timeout);
-												case 'NetworkError_':
-													return $elm$core$Result$Err($elm$http$Http$NetworkError);
-												case 'BadStatus_':
-													var metadata = response.a;
-													var body = response.b;
-													return $elm$core$Result$Err(
-														$elm$http$Http$BadStatus(metadata.statusCode));
-												default:
-													var metadata = response.a;
-													var body = response.b;
-													return $elm$core$Result$Ok(body);
-											}
-										}),
-									timeout: $elm$core$Maybe$Nothing,
-									url: $author$project$EffectsTask$prefix + 'echo'
+									_arguments: _List_fromArray(
+										[
+											$elm$json$Json$Encode$string('Shit! We didn\'t receive the 4!')
+										]),
+									functionName: 'echo',
+									resolver: $author$project$EffectsTask$simpleStringResolver,
+									timeout: $elm$core$Maybe$Nothing
 								});
 						},
-						$elm$http$Http$task(
+						$author$project$EffectsTask$task(
 							{
-								body: $elm$http$Http$jsonBody(
-									A2(
-										$elm$json$Json$Encode$list,
-										$elm$json$Json$Encode$int,
-										_List_fromArray(
-											[4]))),
-								headers: _List_Nil,
-								method: 'POST',
-								resolver: $elm$http$Http$stringResolver(
-									function (response) {
-										switch (response.$) {
-											case 'BadUrl_':
-												var error = response.a;
-												return $elm$core$Result$Err(
-													$elm$http$Http$BadUrl(error));
-											case 'Timeout_':
-												return $elm$core$Result$Err($elm$http$Http$Timeout);
-											case 'NetworkError_':
-												return $elm$core$Result$Err($elm$http$Http$NetworkError);
-											case 'BadStatus_':
-												var metadata = response.a;
-												var body = response.b;
-												return $elm$core$Result$Err(
-													$elm$http$Http$BadStatus(metadata.statusCode));
-											default:
-												var metadata = response.a;
-												var body = response.b;
-												return $elm$core$Result$Ok(body);
-										}
-									}),
-								timeout: $elm$core$Maybe$Nothing,
-								url: $author$project$EffectsTask$prefix + 'echo'
+								_arguments: _List_fromArray(
+									[
+										$elm$json$Json$Encode$int(4)
+									]),
+								functionName: 'asyncEcho',
+								resolver: $author$project$EffectsTask$simpleStringResolver,
+								timeout: $elm$core$Maybe$Nothing
 							})))
 				])));
 };

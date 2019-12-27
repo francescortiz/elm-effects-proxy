@@ -33,112 +33,48 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( {}
     , Cmd.batch
-        [ Http.get
-            { url = EffectsTask.prefix ++ "patch"
-            , expect = Http.expectString GotEffectResponse
-            }
-        , Http.post
-            { url = EffectsTask.prefix ++ "console.log"
-            , body = Http.jsonBody (E.list E.string [ "Pep", "Josep" ])
-            , expect = Http.expectString GotEffectResponse
-            }
-        , Http.post
-            { url = EffectsTask.prefix ++ "document"
-            , body = Http.jsonBody (E.list E.string [ "Pep", "Josep" ])
-            , expect = Http.expectString GotEffectResponse
-            }
-        , Http.post
-            { url = EffectsTask.prefix ++ "nothing.nothing"
-            , body = Http.jsonBody (E.list E.string [ "Pep", "Josep" ])
-            , expect = Http.expectString GotEffectResponse
-            }
-        , Http.post
-            { url = EffectsTask.prefix ++ "asyncEcho"
-            , body = Http.jsonBody (E.list E.string [ "Pep", "Josep" ])
-            , expect = Http.expectString GotEffectResponse
-            }
+        [ EffectsTask.cmd
+            (Http.expectString GotEffectResponse)
+            "patch"
+            []
+        , EffectsTask.cmd
+            (Http.expectString GotEffectResponse)
+            "console.log"
+            [ E.string "Pep", E.int 3 ]
+        , EffectsTask.cmd
+            (Http.expectString GotEffectResponse)
+            "document"
+            [ E.string "Pep", E.int 3 ]
+        , EffectsTask.cmd
+            (Http.expectString GotEffectResponse)
+            "nothing.nothing"
+            [ E.string "Pep", E.int 3 ]
+        , EffectsTask.cmd
+            (Http.expectString GotEffectResponse)
+            "asyncEcho"
+            [ E.string "Happy" ]
         , Task.attempt GotEffectResponse <|
-            (Http.task
-                { method = "POST"
-                , headers = []
-                , url = EffectsTask.prefix ++ "echo"
-                , body = Http.jsonBody (E.list E.int [ 4 ])
-                , resolver =
-                    Http.stringResolver
-                        (\response ->
-                            case response of
-                                BadUrl_ error ->
-                                    Err <| BadUrl error
-
-                                Timeout_ ->
-                                    Err <| Timeout
-
-                                NetworkError_ ->
-                                    Err <| NetworkError
-
-                                BadStatus_ metadata body ->
-                                    Err <| BadStatus metadata.statusCode
-
-                                GoodStatus_ metadata body ->
-                                    Ok body
-                        )
+            (EffectsTask.task
+                { resolver = EffectsTask.simpleStringResolver
+                , functionName = "asyncEcho"
+                , arguments = [ E.int 4 ]
                 , timeout = Nothing
                 }
                 |> Task.andThen
                     (\previousValue ->
                         if previousValue == "4" then
-                            Http.task
-                                { method = "POST"
-                                , headers = []
-                                , url = EffectsTask.prefix ++ "echo"
-                                , body = Http.jsonBody (E.list E.string [ "Nice! We received the 4!" ])
-                                , resolver =
-                                    Http.stringResolver
-                                        (\response ->
-                                            case response of
-                                                BadUrl_ error ->
-                                                    Err <| BadUrl error
-
-                                                Timeout_ ->
-                                                    Err <| Timeout
-
-                                                NetworkError_ ->
-                                                    Err <| NetworkError
-
-                                                BadStatus_ metadata body ->
-                                                    Err <| BadStatus metadata.statusCode
-
-                                                GoodStatus_ metadata body ->
-                                                    Ok body
-                                        )
+                            EffectsTask.task
+                                { resolver = EffectsTask.simpleStringResolver
+                                , functionName = "echo"
+                                , arguments = [ E.string "Nice! We received the 4!" ]
                                 , timeout = Nothing
                                 }
 
                         else
-                            Http.task
-                                { method = "POST"
-                                , headers = []
-                                , url = EffectsTask.prefix ++ "echo"
-                                , body = Http.jsonBody (E.list E.string [ "Shit! We didn't receive the 4!" ])
-                                , resolver =
-                                    Http.stringResolver
-                                        (\response ->
-                                            case response of
-                                                BadUrl_ error ->
-                                                    Err <| BadUrl error
-
-                                                Timeout_ ->
-                                                    Err <| Timeout
-
-                                                NetworkError_ ->
-                                                    Err <| NetworkError
-
-                                                BadStatus_ metadata body ->
-                                                    Err <| BadStatus metadata.statusCode
-
-                                                GoodStatus_ metadata body ->
-                                                    Ok body
-                                        )
+                            EffectsTask.task
+                                { resolver = EffectsTask.simpleStringResolver
+                                , functionName = "echo"
+                                , arguments = [ E.string "Shit! We didn't receive the 4!" ]
                                 , timeout = Nothing
                                 }
                     )
