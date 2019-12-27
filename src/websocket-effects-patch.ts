@@ -61,7 +61,7 @@ declare interface XMLHttpRequest {
 
     const patchedSend =
         function (originalSend: Function) {
-            return function (this: XMLHttpRequest, body?: Document | BodyInit | null): void {
+            return async function (this: XMLHttpRequest, body?: Document | BodyInit | null): Promise<void> {
                 if (this.isElmEffectsTask) {
                     const functionPath = this.elmEffectsTask.functionPath;
                     var functionArguments = [];
@@ -91,7 +91,7 @@ declare interface XMLHttpRequest {
                         const typeOfResolvedFunction: string = typeof resolvedFunction;
 
                         if (typeOfResolvedFunction === "function") {
-                            const result = resolvedFunction.apply(window, functionArguments);
+                            const result = await resolvedFunction.apply(window, functionArguments);
                             setResponseOf(this, 200, result);
                         } else {
                             const errorMessage = `ElmEffectsTask: '${functionPath}' does not resolve to a function. It resolves to '${typeOfResolvedFunction}'.`;
@@ -104,7 +104,7 @@ declare interface XMLHttpRequest {
                         console.error(errorMessage);
                     }
                 } else {
-                    originalSend.apply(this, arguments);
+                    originalSend.call(this, body);
                 }
             };
         };

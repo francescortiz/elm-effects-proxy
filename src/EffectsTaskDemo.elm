@@ -52,6 +52,11 @@ init flags =
             , body = Http.jsonBody (E.list E.string [ "Pep", "Josep" ])
             , expect = Http.expectString GotEffectResponse
             }
+        , Http.post
+            { url = EffectsTask.prefix ++ "asyncEcho"
+            , body = Http.jsonBody (E.list E.string [ "Pep", "Josep" ])
+            , expect = Http.expectString GotEffectResponse
+            }
         , Task.attempt GotEffectResponse <|
             (Http.task
                 { method = "POST"

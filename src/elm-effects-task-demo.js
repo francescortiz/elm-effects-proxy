@@ -6210,6 +6210,17 @@ var $author$project$EffectsTaskDemo$init = function (flags) {
 						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
 						url: $author$project$EffectsTask$prefix + 'nothing.nothing'
 					}),
+					$elm$http$Http$post(
+					{
+						body: $elm$http$Http$jsonBody(
+							A2(
+								$elm$json$Json$Encode$list,
+								$elm$json$Json$Encode$string,
+								_List_fromArray(
+									['Pep', 'Josep']))),
+						expect: $elm$http$Http$expectString($author$project$EffectsTaskDemo$GotEffectResponse),
+						url: $author$project$EffectsTask$prefix + 'asyncEcho'
+					}),
 					A2(
 					$elm$core$Task$attempt,
 					$author$project$EffectsTaskDemo$GotEffectResponse,

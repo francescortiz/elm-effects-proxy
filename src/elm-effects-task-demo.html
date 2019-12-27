@@ -7,9 +7,20 @@
 <body>
 <script>
     function echo(a) {
-        console.log("echo() => ",a)
+        console.log("echo() => ", a);
         return a;
     }
+
+    async function asyncEcho(a) {
+        console.log("asyncEcho() => queued! ", a);
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                console.log("asyncEcho() => done! ", a);
+                resolve(a)
+            }, 1000);
+        });
+    }
+
 </script>
 <script src="src/websocket-effects-patch.js"></script>
 <script src="src/elm-effects-task-demo.js"></script>
