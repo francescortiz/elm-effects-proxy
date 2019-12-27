@@ -1,7 +1,7 @@
 {
   "name": "elm-effects-task",
   "version": "1.0.0",
-  "description": "",
+  "description": "Patch for XMLHttpRequest that enables side effects as Tasks in Elm.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,9 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/lodash.get": "^4.4.6",
     "elm-live": "^4.0.0-rc.1",
-    "lodash.get": "^4.4.2",
     "typescript": "^3.7.4"
   }
 }
