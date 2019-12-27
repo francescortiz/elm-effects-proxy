@@ -10,5 +10,4 @@ need of using ports.
 
 You can see an example implementation in the file `src/EffectsTaskDemo.elm`.
 
-## Package?
 
