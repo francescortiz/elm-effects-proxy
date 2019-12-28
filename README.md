@@ -1,4 +1,4 @@
-# elm-effects-task
+# elm-effects-proxy
 
 This project provides a monkey patch for XMLHttpRequest that enables side effects as Cmds or Tasks in Elm without the 
 need of using ports.
