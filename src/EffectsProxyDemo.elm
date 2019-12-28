@@ -1,7 +1,7 @@
-module EffectsTaskDemo exposing (..)
+module EffectsProxyDemo exposing (..)
 
 import Browser exposing (Document)
-import EffectsTask
+import EffectsProxy
 import Html exposing (Html, text)
 import Http exposing (Error(..), Response(..))
 import Json.Encode as E
@@ -33,29 +33,33 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( {}
     , Cmd.batch
-        [ EffectsTask.cmd
+        [ EffectsProxy.cmd
             (Http.expectString GotEffectResponse)
             "patch"
             []
-        , EffectsTask.cmd
+        , EffectsProxy.cmd
             (Http.expectString GotEffectResponse)
             "console.log"
             [ E.string "Pep", E.int 3 ]
-        , EffectsTask.cmd
+        , EffectsProxy.cmd
             (Http.expectString GotEffectResponse)
             "document"
             [ E.string "Pep", E.int 3 ]
-        , EffectsTask.cmd
+        , EffectsProxy.cmd
             (Http.expectString GotEffectResponse)
             "nothing.nothing"
             [ E.string "Pep", E.int 3 ]
-        , EffectsTask.cmd
+        , EffectsProxy.cmd
             (Http.expectString GotEffectResponse)
             "asyncEcho"
             [ E.string "Happy" ]
+        , EffectsProxy.cmd
+            (Http.expectString GotEffectResponse)
+            "crash"
+            []
         , Task.attempt GotEffectResponse <|
-            (EffectsTask.task
-                { resolver = EffectsTask.simpleStringResolver
+            (EffectsProxy.task
+                { resolver = EffectsProxy.simpleStringResolver
                 , functionName = "asyncEcho"
                 , arguments = [ E.int 4 ]
                 , timeout = Nothing
@@ -63,16 +67,16 @@ init flags =
                 |> Task.andThen
                     (\previousValue ->
                         if previousValue == "4" then
-                            EffectsTask.task
-                                { resolver = EffectsTask.simpleStringResolver
+                            EffectsProxy.task
+                                { resolver = EffectsProxy.simpleStringResolver
                                 , functionName = "echo"
                                 , arguments = [ E.string "Nice! We received the 4!" ]
                                 , timeout = Nothing
                                 }
 
                         else
-                            EffectsTask.task
-                                { resolver = EffectsTask.simpleStringResolver
+                            EffectsProxy.task
+                                { resolver = EffectsProxy.simpleStringResolver
                                 , functionName = "echo"
                                 , arguments = [ E.string "Shit! We didn't receive the 4!" ]
                                 , timeout = Nothing
@@ -85,8 +89,8 @@ init flags =
 
 view : Model -> Document Msg
 view model =
-    { title = "Elm Effects Task Demo"
-    , body = [ text "Effects task demo" ]
+    { title = "Elm Effects Proxy Demo"
+    , body = [ text "Effects proxy demo" ]
     }
 
 

@@ -1,4 +1,4 @@
-module EffectsTask exposing (..)
+module EffectsProxy exposing (..)
 
 import Http exposing (Error(..), Expect, Response(..))
 import Json.Encode as E exposing (Value)
@@ -7,7 +7,7 @@ import Task exposing (Task)
 
 prefix : String
 prefix =
-    "https://elm-effects-task.flexidao.com/"
+    "https://elm-effects-proxy.flexidao.com/"
 
 
 cmd :

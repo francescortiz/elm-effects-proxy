@@ -36,8 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 (function (window) {
-    var EFFECTS_TASK_URL = "https://elm-effects-task.flexidao.com/";
-    var EFFECTS_TASK_URL_LENGTH = EFFECTS_TASK_URL.length;
+    var EFFECTS_PROXY_URL = "https://elm-effects-proxy.flexidao.com/";
+    var EFFECTS_PROXY_URL_LENGTH = EFFECTS_PROXY_URL.length;
     function resolve(obj, path) {
         return path.split('.').reduce(function (o, i) { return o[i]; }, obj);
     }
@@ -55,24 +55,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     };
     var patchedOpen = function (originalOpen) {
         return function (method, url, async, username, password) {
-            if (url.startsWith(EFFECTS_TASK_URL)) {
-                var functionPath = url.substring(EFFECTS_TASK_URL_LENGTH);
-                this.isElmEffectsTask = true;
-                this.elmEffectsTask = {
+            if (url.startsWith(EFFECTS_PROXY_URL)) {
+                var functionPath = url.substring(EFFECTS_PROXY_URL_LENGTH);
+                this.isElmEffectsProxy = true;
+                this.elmEffectsProxy = {
                     functionPath: functionPath,
                     functionArguments: [],
                 };
             }
             else {
                 // This is important, since XMLHttpRequest might be reused.
-                this.isElmEffectsTask = false;
+                this.isElmEffectsProxy = false;
                 originalOpen.apply(this, arguments);
             }
         };
     };
     var patchedSetRequestHeader = function (originalSetRequestHeader) {
         return function (name, value) {
-            if (this.isElmEffectsTask) {
+            if (this.isElmEffectsProxy) {
                 // pass
             }
             else {
@@ -83,12 +83,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     var patchedSend = function (originalSend) {
         return function (body) {
             return __awaiter(this, void 0, void 0, function () {
-                var functionPath, functionArguments, errorMessage, resolvedFunction, errorMessage, typeOfResolvedFunction, result, errorMessage, errorMessage;
+                var functionPath, functionArguments, errorMessage, resolvedFunction, errorMessage, typeOfResolvedFunction, result, e_1, errorMessage, errorMessage, errorMessage;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (!this.isElmEffectsTask) return [3 /*break*/, 6];
-                            functionPath = this.elmEffectsTask.functionPath;
+                            if (!this.isElmEffectsProxy) return [3 /*break*/, 9];
+                            functionPath = this.elmEffectsProxy.functionPath;
                             functionArguments = [];
                             if (typeof body === "string") {
                                 functionArguments = body
@@ -96,7 +96,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                     : [];
                             }
                             if (!Array.isArray(functionArguments)) {
-                                errorMessage = "ElmEffectsTask: expected array of arguments. Got '" + functionArguments + "'.";
+                                errorMessage = "ElmEffectsProxy: expected array of arguments. Got '" + functionArguments + "'.";
                                 setResponseOf(this, 404, errorMessage);
                                 console.error(errorMessage);
                             }
@@ -104,35 +104,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
                                 resolvedFunction = resolve(window, functionPath);
                             }
                             catch (e) {
-                                errorMessage = "ElmEffectsTask: failed to resolve path '" + functionPath + "'.";
+                                errorMessage = "ElmEffectsProxy: failed to resolve path '" + functionPath + "'.";
                                 setResponseOf(this, 404, errorMessage);
                                 console.error(errorMessage);
                                 console.error(e);
                             }
-                            if (!resolvedFunction) return [3 /*break*/, 4];
+                            if (!resolvedFunction) return [3 /*break*/, 7];
                             typeOfResolvedFunction = typeof resolvedFunction;
-                            if (!(typeOfResolvedFunction === "function")) return [3 /*break*/, 2];
-                            return [4 /*yield*/, resolvedFunction.apply(window, functionArguments)];
+                            if (!(typeOfResolvedFunction === "function")) return [3 /*break*/, 5];
+                            _a.label = 1;
                         case 1:
+                            _a.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, resolvedFunction.apply(window, functionArguments)];
+                        case 2:
                             result = _a.sent();
                             setResponseOf(this, 200, result);
-                            return [3 /*break*/, 3];
-                        case 2:
-                            errorMessage = "ElmEffectsTask: '" + functionPath + "' does not resolve to a function. It resolves to '" + typeOfResolvedFunction + "'.";
+                            return [3 /*break*/, 4];
+                        case 3:
+                            e_1 = _a.sent();
+                            errorMessage = "ElmEffectsProxy: error calling '" + functionPath + "': " + e_1 + ".";
+                            setResponseOf(this, 500, e_1);
+                            console.error(errorMessage);
+                            console.error(e_1);
+                            return [3 /*break*/, 4];
+                        case 4: return [3 /*break*/, 6];
+                        case 5:
+                            errorMessage = "ElmEffectsProxy: '" + functionPath + "' does not resolve to a function. It resolves to '" + typeOfResolvedFunction + "'.";
                             setResponseOf(this, 404, errorMessage);
                             console.error(errorMessage);
-                            _a.label = 3;
-                        case 3: return [3 /*break*/, 5];
-                        case 4:
-                            errorMessage = "ElmEffectsTask: '" + functionPath + "' resolves to undefined, null, false or equivalent.";
+                            _a.label = 6;
+                        case 6: return [3 /*break*/, 8];
+                        case 7:
+                            errorMessage = "ElmEffectsProxy: '" + functionPath + "' resolves to undefined, null, false or equivalent.";
                             setResponseOf(this, 404, errorMessage);
                             console.error(errorMessage);
-                            _a.label = 5;
-                        case 5: return [3 /*break*/, 7];
-                        case 6:
+                            _a.label = 8;
+                        case 8: return [3 /*break*/, 10];
+                        case 9:
                             originalSend.call(this, body);
-                            _a.label = 7;
-                        case 7: return [2 /*return*/];
+                            _a.label = 10;
+                        case 10: return [2 /*return*/];
                     }
                 });
             });

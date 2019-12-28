@@ -21,11 +21,15 @@
         });
     }
 
+    function crash() {
+        throw new Error("Crash attempt!");
+    }
+
 </script>
 <script src="src/websocket-effects-patch.js"></script>
-<script src="src/elm-effects-task-demo.js"></script>
+<script src="src/elm-effects-proxy-demo.js"></script>
 <script>
-    var elmEffectsTaskDemo = Elm.EffectsTaskDemo.init();
+    var elmEffectsProxyDemo = Elm.EffectsProxyDemo.init();
 </script>
 </body>
 </html>

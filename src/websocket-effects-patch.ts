@@ -1,17 +1,17 @@
-type ElmEffectsTask = {
+type ElmEffectsProxy = {
     functionPath: string,
     functionArguments: any[],
 }
 
 declare interface XMLHttpRequest {
-    isElmEffectsTask: boolean;
+    isElmEffectsProxy: boolean;
     patchedForElmEffects: boolean;
-    elmEffectsTask: ElmEffectsTask;
+    elmEffectsProxy: ElmEffectsProxy;
 }
 
 (function (window: Window): void {
-    const EFFECTS_TASK_URL = "https://elm-effects-task.flexidao.com/";
-    const EFFECTS_TASK_URL_LENGTH = EFFECTS_TASK_URL.length;
+    const EFFECTS_PROXY_URL = "https://elm-effects-proxy.flexidao.com/";
+    const EFFECTS_PROXY_URL_LENGTH = EFFECTS_PROXY_URL.length;
 
     function resolve(obj: any, path: string) {
         return path.split('.').reduce((o: any, i: string) => o[i], obj)
@@ -33,16 +33,16 @@ declare interface XMLHttpRequest {
     const patchedOpen =
         function (originalOpen: Function) {
             return function (this: XMLHttpRequest, method: string, url: string, async?: boolean, username?: string | null, password?: string | null): void {
-                if (url.startsWith(EFFECTS_TASK_URL)) {
-                    const functionPath = url.substring(EFFECTS_TASK_URL_LENGTH);
-                    this.isElmEffectsTask = true;
-                    this.elmEffectsTask = {
+                if (url.startsWith(EFFECTS_PROXY_URL)) {
+                    const functionPath = url.substring(EFFECTS_PROXY_URL_LENGTH);
+                    this.isElmEffectsProxy = true;
+                    this.elmEffectsProxy = {
                         functionPath: functionPath,
                         functionArguments: [],
                     }
                 } else {
                     // This is important, since XMLHttpRequest might be reused.
-                    this.isElmEffectsTask = false;
+                    this.isElmEffectsProxy = false;
                     originalOpen.apply(this, arguments);
                 }
             };
@@ -51,7 +51,7 @@ declare interface XMLHttpRequest {
     const patchedSetRequestHeader =
         function (originalSetRequestHeader: Function) {
             return function (this: XMLHttpRequest, name: string, value: string): void {
-                if (this.isElmEffectsTask) {
+                if (this.isElmEffectsProxy) {
                     // pass
                 } else {
                     originalSetRequestHeader.apply(this, arguments);
@@ -62,8 +62,8 @@ declare interface XMLHttpRequest {
     const patchedSend =
         function (originalSend: Function) {
             return async function (this: XMLHttpRequest, body?: Document | BodyInit | null): Promise<void> {
-                if (this.isElmEffectsTask) {
-                    const functionPath = this.elmEffectsTask.functionPath;
+                if (this.isElmEffectsProxy) {
+                    const functionPath = this.elmEffectsProxy.functionPath;
                     var functionArguments = [];
                     if (typeof body === "string") {
                         functionArguments = body
@@ -72,7 +72,7 @@ declare interface XMLHttpRequest {
                     }
 
                     if (!Array.isArray(functionArguments)) {
-                        const errorMessage = `ElmEffectsTask: expected array of arguments. Got '${functionArguments}'.`;
+                        const errorMessage = `ElmEffectsProxy: expected array of arguments. Got '${functionArguments}'.`;
                         setResponseOf(this, 404, errorMessage);
                         console.error(errorMessage);
                     }
@@ -81,7 +81,7 @@ declare interface XMLHttpRequest {
                     try {
                         resolvedFunction = resolve(window, functionPath);
                     } catch (e) {
-                        const errorMessage = `ElmEffectsTask: failed to resolve path '${functionPath}'.`;
+                        const errorMessage = `ElmEffectsProxy: failed to resolve path '${functionPath}'.`;
                         setResponseOf(this, 404, errorMessage);
                         console.error(errorMessage);
                         console.error(e);
@@ -91,15 +91,22 @@ declare interface XMLHttpRequest {
                         const typeOfResolvedFunction: string = typeof resolvedFunction;
 
                         if (typeOfResolvedFunction === "function") {
-                            const result = await resolvedFunction.apply(window, functionArguments);
-                            setResponseOf(this, 200, result);
+                            try {
+                                const result = await resolvedFunction.apply(window, functionArguments);
+                                setResponseOf(this, 200, result);
+                            } catch (e) {
+                                const errorMessage = `ElmEffectsProxy: error calling '${functionPath}': ${e}.`;
+                                setResponseOf(this, 500, e);
+                                console.error(errorMessage);
+                                console.error(e);
+                            }
                         } else {
-                            const errorMessage = `ElmEffectsTask: '${functionPath}' does not resolve to a function. It resolves to '${typeOfResolvedFunction}'.`;
+                            const errorMessage = `ElmEffectsProxy: '${functionPath}' does not resolve to a function. It resolves to '${typeOfResolvedFunction}'.`;
                             setResponseOf(this, 404, errorMessage);
                             console.error(errorMessage);
                         }
                     } else {
-                        const errorMessage = `ElmEffectsTask: '${functionPath}' resolves to undefined, null, false or equivalent.`;
+                        const errorMessage = `ElmEffectsProxy: '${functionPath}' resolves to undefined, null, false or equivalent.`;
                         setResponseOf(this, 404, errorMessage);
                         console.error(errorMessage);
                     }
