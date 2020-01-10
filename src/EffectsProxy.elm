@@ -3,6 +3,7 @@ module EffectsProxy exposing (..)
 import Http exposing (Error(..), Expect, Response(..))
 import Json.Encode as E exposing (Value)
 import Task exposing (Task)
+import Json.Decode as D
 
 
 prefix : String
@@ -76,4 +77,32 @@ simpleStringResolver =
 
                 GoodStatus_ metadata body ->
                     Ok body
+        )
+
+
+
+jsonResolver : D.Decoder a -> Http.Resolver Http.Error a
+jsonResolver  decoder =
+    Http.stringResolver
+        (\response ->
+            case response of
+                BadUrl_ error ->
+                    Err <| BadUrl error
+
+                Timeout_ ->
+                    Err <| Timeout
+
+                NetworkError_ ->
+                    Err <| NetworkError
+
+                BadStatus_ metadata body ->
+                    Err <| BadStatus metadata.statusCode
+
+                GoodStatus_ metadata body ->
+                    case D.decodeString (decoder) body of
+                       Ok value ->
+                           Ok value
+
+                       Err err ->
+                           Err (Http.BadBody (D.errorToString err))
         )
