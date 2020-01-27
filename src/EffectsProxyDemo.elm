@@ -35,6 +35,10 @@ init flags =
     , Cmd.batch
         [ EffectsProxy.cmd
             (Http.expectString GotEffectResponse)
+            "keepFeeding"
+            [ E.int 10 ]
+        , EffectsProxy.cmd
+            (Http.expectString GotEffectResponse)
             "patch"
             []
         , EffectsProxy.cmd

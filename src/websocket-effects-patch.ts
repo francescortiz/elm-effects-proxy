@@ -91,14 +91,33 @@ declare interface XMLHttpRequest {
                         const typeOfResolvedFunction: string = typeof resolvedFunction;
 
                         if (typeOfResolvedFunction === "function") {
-                            try {
-                                const result = await resolvedFunction.apply(window, functionArguments);
-                                setResponseOf(this, 200, result);
-                            } catch (e) {
-                                const errorMessage = `ElmEffectsProxy: error calling '${functionPath}': ${e}.`;
-                                setResponseOf(this, 500, e);
-                                console.error(errorMessage);
-                                console.error(e);
+                            console.log(resolvedFunction.constructor.name)
+                            if (resolvedFunction.constructor.name === "GeneratorFunction" || resolvedFunction.constructor.name === "AsyncGeneratorFunction") {
+                                try {
+                                    let iterator = resolvedFunction.apply(window, functionArguments);
+                                    while (true) {
+                                        const result = await iterator.next();
+                                        if (result.done) {
+                                            break;
+                                        }
+                                        setResponseOf(this, 206, result.value);
+                                    }
+                                } catch (e) {
+                                    const errorMessage = `ElmEffectsProxy: error calling '${functionPath}': ${e}.`;
+                                    setResponseOf(this, 500, e);
+                                    console.error(errorMessage);
+                                    console.error(e);
+                                }
+                            } else {
+                                try {
+                                    const result = await resolvedFunction.apply(window, functionArguments);
+                                    setResponseOf(this, 200, result);
+                                } catch (e) {
+                                    const errorMessage = `ElmEffectsProxy: error calling '${functionPath}': ${e}.`;
+                                    setResponseOf(this, 500, e);
+                                    console.error(errorMessage);
+                                    console.error(e);
+                                }
                             }
                         } else {
                             const errorMessage = `ElmEffectsProxy: '${functionPath}' does not resolve to a function. It resolves to '${typeOfResolvedFunction}'.`;

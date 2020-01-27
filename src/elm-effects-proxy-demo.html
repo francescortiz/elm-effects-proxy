@@ -6,12 +6,13 @@
 </head>
 <body>
 <script>
-    function echo(a) {
+
+    async function echo(a) {
         console.log("echo() => ", a);
         return a;
     }
 
-    async function asyncEcho(a) {
+    function asyncEcho(a) {
         console.log("asyncEcho() => queued! ", a);
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -21,8 +22,20 @@
         });
     }
 
-    function crash() {
+    async function crash() {
         throw new Error("Crash attempt!");
+    }
+
+    const sleep = (ms) => {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    };
+
+    async function* keepFeeding(count) {
+        let i = 0;
+        while (i < count) {
+            await sleep(1000);
+            yield "Side effects with repetitive callbacks, like websockets: Iteration " + (++i).toString();
+        }
     }
 
 </script>

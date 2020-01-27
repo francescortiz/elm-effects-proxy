@@ -6225,6 +6225,14 @@ var $author$project$EffectsProxyDemo$init = function (flags) {
 					A3(
 					$author$project$EffectsProxy$cmd,
 					$elm$http$Http$expectString($author$project$EffectsProxyDemo$GotEffectResponse),
+					'keepFeeding',
+					_List_fromArray(
+						[
+							$elm$json$Json$Encode$int(10)
+						])),
+					A3(
+					$author$project$EffectsProxy$cmd,
+					$elm$http$Http$expectString($author$project$EffectsProxyDemo$GotEffectResponse),
 					'patch',
 					_List_Nil),
 					A3(
