@@ -8,7 +8,7 @@
     "watch:typescript": "tsc --watch"
   },
   "resolutions": {
-    "**/ws": "^7.1.1",
+    "**/ws": "^7.4.6",
     "**/http-proxy": "^1.18.1"
   },
   "keywords": [],
