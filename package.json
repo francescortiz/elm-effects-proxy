@@ -4,7 +4,6 @@
   "description": "Patch for XMLHttpRequest that enables side effects as HTTP requests in Elm.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "elm-live": "elm-live src/EffectsProxyDemo.elm --open --start-page=src/elm-effects-proxy-demo.html -- --output src/elm-effects-proxy-demo.js",
     "watch:typescript": "tsc --watch"
   },
@@ -12,7 +11,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "elm-live": "^4.0.0-rc.1",
-    "typescript": "^3.7.4"
+    "elm": "^0.19.1-5",
+    "elm-live": "^4.0.2",
+    "typescript": "^4.6.4"
   }
 }
