@@ -7,6 +7,9 @@
     "elm-live": "elm-live src/EffectsProxyDemo.elm --open --start-page=src/elm-effects-proxy-demo.html -- --output src/elm-effects-proxy-demo.js",
     "watch:typescript": "tsc --watch"
   },
+  "resolutions": {
+    "**/ws": "^7.1.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
